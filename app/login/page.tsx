@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import PhoneInput from 'react-phone-number-input'
-import type { E164Number } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 
 export default function LoginPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login')
-  const [phone, setPhone] = useState<E164Number | undefined>()
+  const [phone, setPhone] = useState<string | undefined>()
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [fullName, setFullName] = useState('')
