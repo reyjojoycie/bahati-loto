@@ -8,12 +8,12 @@ import Link from 'next/link'
 export default function EnregistrerTicketPage() {
   const [ticketId, setTicketId] = useState('')
   const [numbers, setNumbers] = useState<number[]>([])
-  const [ticketType, setTicketType] = useState<'normal' | 'booster'>('normal')
+  const [ticketType, setTicketType] = useState<'standard' | 'booster'>('standard')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [availableTypes, setAvailableTypes] = useState<{ normal: boolean; booster: boolean }>({
-    normal: true,
+  const [availableTypes, setAvailableTypes] = useState<{ standard: boolean; booster: boolean }>({
+    standard: true,
     booster: true,
   })
 
@@ -99,7 +99,7 @@ export default function EnregistrerTicketPage() {
       if (physicalTicket.ticket_type !== ticketType) {
         setMessage({ 
           type: 'error', 
-          text: `Ce ticket est de type ${physicalTicket.ticket_type === 'booster' ? 'Booster' : 'Normal'}. Veuillez sélectionner le bon type.` 
+          text: `Ce ticket est de type ${physicalTicket.ticket_type === 'booster' ? 'Booster' : 'standard'}. Veuillez sélectionner le bon type.` 
         })
         setLoading(false)
         return
@@ -136,13 +136,13 @@ export default function EnregistrerTicketPage() {
 
       setMessage({
         type: 'success',
-        text: `Ticket ${ticketType === 'booster' ? 'BOOSTER' : 'NORMAL'} enregistré avec succès ! 🎉`,
+        text: `Ticket ${ticketType === 'booster' ? 'BOOSTER' : 'standard'} enregistré avec succès ! 🎉`,
       })
 
       // Réinitialiser le formulaire
       setTicketId('')
       setNumbers([])
-      setTicketType('normal')
+      setTicketType('standard')
     } catch (err: any) {
       setMessage({ type: 'error', text: 'Une erreur inattendue est survenue' })
     } finally {
@@ -201,15 +201,15 @@ export default function EnregistrerTicketPage() {
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button
-                onClick={() => setTicketType('normal')}
+                onClick={() => setTicketType('standard')}
                 className={`p-6 rounded-2xl font-bold text-xl transition-all transform hover:scale-105 ${
-                  ticketType === 'normal'
+                  ticketType === 'standard'
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-2 border-white shadow-xl'
                     : 'bg-white/20 text-white hover:bg-white/30 border border-white/30'
                 }`}
               >
-                Normal
-                <span className="block text-sm font-normal mt-2 opacity-90">1 000 FC</span>
+                standard
+                <span className="block text-sm font-standard mt-2 opacity-90">1 000 FC</span>
                 <span className="block text-xs mt-1 opacity-75">Jackpot 5 000 000 FC</span>
               </button>
 
@@ -222,7 +222,7 @@ export default function EnregistrerTicketPage() {
                 }`}
               >
                 Booster
-                <span className="block text-sm font-normal mt-2 opacity-90">3 000 FC</span>
+                <span className="block text-sm font-standard mt-2 opacity-90">3 000 FC</span>
                 <span className="block text-xs mt-1 opacity-75">Jackpot 15 000 000 FC</span>
               </button>
             </div>

@@ -133,7 +133,7 @@ export default function LoginPage() {
           draw_date: ticket.draw_date,
           status: 'joué',
           prize: 0,
-          ticket_type: 'normal'
+          ticket_type: 'standard'
         })
         await supabase
           .from('physical_tickets')

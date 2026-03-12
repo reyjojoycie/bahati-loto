@@ -19,7 +19,7 @@ export default function AdminPage() {
   const [generateDrawDate, setGenerateDrawDate] = useState<string>(
     new Date().toISOString().split('T')[0]
   )
-  const [generateType, setGenerateType] = useState<'normal' | 'booster'>('normal')
+  const [generateType, setGenerateType] = useState<'standard' | 'booster'>('standard')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -218,7 +218,7 @@ export default function AdminPage() {
       setError('Veuillez choisir une date de tirage')
       return
     }
-    if (!confirm(`Générer ${generateCount} tickets ${generateType === 'booster' ? 'BOOSTER' : 'NORMAL'} ? Cette action est irréversible.`)) {
+    if (!confirm(`Générer ${generateCount} tickets ${generateType === 'booster' ? 'BOOSTER' : 'STANDARD'} ? Cette action est irréversible.`)) {
       return
     }
     setLoading(true)
@@ -421,7 +421,7 @@ export default function AdminPage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <StatCard label="Tickets vendus" value={soldTickets.length} color="blue" />
           <StatCard label="Booster vendus" value={soldTickets.filter(t => t.ticket_type === 'booster').length} color="purple" />
-          <StatCard label="Standard vendus" value={soldTickets.filter(t => t.ticket_type === 'normal').length} color="green" />
+          <StatCard label="Standard vendus" value={soldTickets.filter(t => t.ticket_type === 'standard').length} color="green" />
           <StatCard label="Disponibles" value={availableTickets.length} color="orange" />
           <StatCard label="Revenu total" value={totalRevenue.toLocaleString() + ' FC'} color="yellow" />
         </div>
@@ -496,10 +496,10 @@ export default function AdminPage() {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
               <select
                 value={generateType}
-                onChange={e => setGenerateType(e.target.value as 'normal' | 'booster')}
+                onChange={e => setGenerateType(e.target.value as 'standard' | 'booster')}
                 className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700"
               >
-                <option value="normal">Normal</option>
+                <option value="standard">standard</option>
                 <option value="booster">Booster</option>
               </select>
             </div>
@@ -570,7 +570,7 @@ export default function AdminPage() {
                         <span className={`px-2 py-1 rounded-full text-xs font-bold ${
                           w.ticket_type === 'booster' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
                         }`}>
-                          {w.ticket_type === 'booster' ? 'BOOSTER' : 'NORMAL'}
+                          {w.ticket_type === 'booster' ? 'BOOSTER' : 'STANDARD'}
                         </span>
                       </td>
                       <td className="px-4 py-3 font-bold">{w.rang}</td>

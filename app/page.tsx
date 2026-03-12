@@ -40,7 +40,7 @@ export default function HomePage() {
     return ticketNumbers.filter(n => winning.includes(n)).length
   }
 
-  const calculatePrize = (matches: number, ticketType: 'normal' | 'booster') => {
+  const calculatePrize = (matches: number, ticketType: 'standard' | 'booster') => {
     if (ticketType === 'booster') {
       if (matches === 6) return 15000000
       if (matches === 5) return 700000
@@ -196,7 +196,7 @@ export default function HomePage() {
         {/* Tableau des gains */}
         <div className="grid md:grid-cols-2 gap-8 mb-16">
           <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-6 shadow-2xl border border-blue-400 transform hover:scale-105 transition">
-            <h3 className="text-3xl font-bold mb-4 text-center">🎟️ Ticket Normal</h3>
+            <h3 className="text-3xl font-bold mb-4 text-center">🎟️ Ticket standard</h3>
             <p className="text-xl text-center mb-4">1 000 FC</p>
             <div className="space-y-3">
               <div className="flex justify-between text-lg"><span>6/6</span><span className="font-bold text-yellow-300">5 000 000 FC</span></div>
@@ -329,7 +329,7 @@ export default function HomePage() {
                           ))}
                         </div>
                         <p className="text-lg mb-2">
-                          Type : <span className="font-bold uppercase">{ticket.ticket_type === 'booster' ? '🔥 Booster' : 'Normal'}</span>
+                          Type : <span className="font-bold uppercase">{ticket.ticket_type === 'booster' ? '🔥 Booster' : 'standard'}</span>
                         </p>
                         {isPast && draw && (
                           <div className="bg-black/30 rounded-xl p-4 text-center">
