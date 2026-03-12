@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import PhoneInput from 'react-phone-number-input'
+import type { E164Number } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 
 export default function LoginPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login')
-  const [phone, setPhone] = useState<string>('')
+  const [phone, setPhone] = useState<E164Number | undefined>()
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [fullName, setFullName] = useState('')
@@ -22,7 +23,6 @@ export default function LoginPage() {
   const supabase = createClient()
   const router = useRouter()
 
-  // Rediriger si déjà connecté
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
@@ -31,14 +31,13 @@ export default function LoginPage() {
     checkUser()
   }, [router, supabase])
 
-  // Récupérer le code mensuel actif depuis la base
   const getCurrentMonthlyCode = async (): Promise<string | null> => {
     try {
       const { data, error } = await supabase
         .from('monthly_ticket_code')
         .select('code')
         .eq('active', true)
-        .maybeSingle() // Évite l'erreur si aucun code
+        .maybeSingle()
       if (error || !data) return null
       return data.code
     } catch {
@@ -46,28 +45,29 @@ export default function LoginPage() {
     }
   }
 
-  // Soumission du formulaire de connexion ou première étape d'inscription
   const handleSubmit = async () => {
     setLoading(true)
     setError(null)
 
-    // Formatage du numéro de téléphone (doit commencer par +243)
+    if (!phone) {
+      setError("Veuillez saisir votre numéro de téléphone")
+      setLoading(false)
+      return
+    }
+
     const formattedPhone = phone.startsWith('+') ? phone : '+243' + phone.replace(/^0+/, '')
 
     if (mode === 'login') {
-      // Connexion
       const { error } = await supabase.auth.signInWithPassword({
         phone: formattedPhone,
         password,
       })
-
       if (error) {
-        setError("Numéro ou mot de passe incorrect. Réessayez ou créez un compte.")
+        setError("Numéro ou mot de passe incorrect.")
       } else {
         router.push('/')
       }
     } else {
-      // Première étape d'inscription : envoi OTP
       const { error } = await supabase.auth.signUp({
         phone: formattedPhone,
         password,
@@ -75,10 +75,9 @@ export default function LoginPage() {
           data: { full_name: fullName },
         },
       })
-
       if (error) {
         if (error.message.includes('already registered')) {
-          setError("Ce numéro est déjà utilisé. Connectez-vous ou réinitialisez votre mot de passe.")
+          setError("Ce numéro est déjà utilisé.")
         } else {
           setError(error.message)
         }
@@ -91,10 +90,15 @@ export default function LoginPage() {
     setLoading(false)
   }
 
-  // Vérification du code OTP
   const verifyOtp = async () => {
     setLoading(true)
     setError(null)
+
+    if (!phone) {
+      setError("Numéro de téléphone manquant")
+      setLoading(false)
+      return
+    }
 
     const formattedPhone = phone.startsWith('+') ? phone : '+243' + phone.replace(/^0+/, '')
 
@@ -103,32 +107,25 @@ export default function LoginPage() {
       token: otp,
       type: 'sms',
     })
-
     if (error) {
-      setError("Code OTP incorrect. Veuillez réessayer.")
+      setError("Code OTP incorrect.")
     } else {
-      // Inscription réussie, on peut éventuellement attribuer un ticket automatiquement
       await handleAutoAssignTicket()
       router.push('/')
     }
-
     setLoading(false)
   }
 
-  // Attribuer un ticket disponible si l'utilisateur vient de s'inscrire (optionnel)
   const handleAutoAssignTicket = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-
-      // Chercher un ticket disponible
       const { data: ticket } = await supabase
         .from('physical_tickets')
         .select('id, draw_date')
         .eq('status', 'disponible')
         .limit(1)
         .maybeSingle()
-
       if (ticket) {
         await supabase.from('tickets').insert({
           id: ticket.id,
@@ -137,14 +134,12 @@ export default function LoginPage() {
           draw_date: ticket.draw_date,
           status: 'joué',
           prize: 0,
-          ticket_type: 'normal' // Par défaut, on attribue un ticket normal
+          ticket_type: 'normal'
         })
-
         await supabase
           .from('physical_tickets')
           .update({ status: 'utilisé', sold_at: new Date().toISOString() })
           .eq('id', ticket.id)
-
         setSuccess("Un ticket vous a été automatiquement attribué !")
       }
     } catch (err) {
@@ -152,12 +147,10 @@ export default function LoginPage() {
     }
   }
 
-  // Inscription via le code mensuel du ticket (sans OTP)
   const handleRegisterWithMonthlyTicketCode = async () => {
     setLoading(true)
     setError(null)
 
-    // Validation des champs
     if (!fullName.trim()) {
       setError("Veuillez saisir votre nom complet")
       setLoading(false)
@@ -180,8 +173,6 @@ export default function LoginPage() {
     }
 
     const formattedPhone = phone.startsWith('+') ? phone : '+243' + phone.replace(/^0+/, '')
-
-    // Vérifier le code mensuel
     const validCode = await getCurrentMonthlyCode()
     if (!validCode) {
       setError("Aucun code mensuel actif trouvé. Contactez l'administrateur.")
@@ -189,30 +180,20 @@ export default function LoginPage() {
       return
     }
     if (ticketMonthlyCode !== validCode) {
-      setError("Code mensuel incorrect. Vérifiez le code inscrit sur votre ticket.")
+      setError("Code mensuel incorrect.")
       setLoading(false)
       return
     }
 
     try {
-      // Créer le compte
       const { data, error: signUpError } = await supabase.auth.signUp({
         phone: formattedPhone,
         password,
-        options: {
-          data: { full_name: fullName },
-        },
+        options: { data: { full_name: fullName } },
       })
+      if (signUpError) throw signUpError
 
-      if (signUpError) {
-        setError(signUpError.message)
-        setLoading(false)
-        return
-      }
-
-      // Attribuer un ticket disponible (optionnel)
       await handleAutoAssignTicket()
-
       setSuccess("Compte créé avec succès ! Redirection...")
       setTimeout(() => router.push('/'), 2000)
     } catch (err: any) {
@@ -225,7 +206,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo / Titre */}
         <div className="text-center mb-8">
           <h1 className="text-5xl font-black text-white mb-2">
             Bahati<span className="text-yellow-400">-Loto</span>
@@ -233,9 +213,7 @@ export default function LoginPage() {
           <p className="text-yellow-200 text-lg">Connexion • Inscription</p>
         </div>
 
-        {/* Carte principale */}
         <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20">
-          {/* Messages */}
           {error && (
             <div className="mb-6 p-4 bg-red-500/20 border border-red-400 rounded-xl text-white text-center">
               {error}
@@ -247,39 +225,21 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Sélecteur de mode */}
           <div className="flex rounded-xl bg-white/5 p-1 mb-8">
             <button
-              onClick={() => {
-                setMode('login')
-                setStep('credentials')
-                setError(null)
-              }}
+              onClick={() => { setMode('login'); setStep('credentials'); setError(null); }}
               className={`flex-1 py-3 rounded-lg font-bold transition ${
-                mode === 'login'
-                  ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow'
-                  : 'text-gray-300 hover:text-white'
+                mode === 'login' ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow' : 'text-gray-300 hover:text-white'
               }`}
-            >
-              Connexion
-            </button>
+            >Connexion</button>
             <button
-              onClick={() => {
-                setMode('register')
-                setStep('credentials')
-                setError(null)
-              }}
+              onClick={() => { setMode('register'); setStep('credentials'); setError(null); }}
               className={`flex-1 py-3 rounded-lg font-bold transition ${
-                mode === 'register'
-                  ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white shadow'
-                  : 'text-gray-300 hover:text-white'
+                mode === 'register' ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white shadow' : 'text-gray-300 hover:text-white'
               }`}
-            >
-              Inscription
-            </button>
+            >Inscription</button>
           </div>
 
-          {/* Étape saisie identifiants */}
           {step === 'credentials' && (
             <div className="space-y-5">
               {mode === 'register' && (
@@ -335,14 +295,13 @@ export default function LoginPage() {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg transition transform hover:scale-105 disabled:opacity-50"
               >
                 {loading ? 'Chargement...' : mode === 'login' ? 'Se connecter' : "S'inscrire"}
               </button>
             </div>
           )}
 
-          {/* Étape OTP */}
           {step === 'otp' && (
             <div className="space-y-6">
               <div className="text-center text-white">
@@ -379,7 +338,6 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Bloc d'inscription avec code mensuel */}
               <div className="bg-white/5 rounded-xl p-6 border border-white/10">
                 <p className="text-white text-center mb-4">
                   Vous n'avez pas reçu le code ?<br />
@@ -404,44 +362,18 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Lien pour changer de mode (basculer login/register) */}
           {step === 'credentials' && (
             <p className="text-center text-white/70 mt-6">
               {mode === 'login' ? (
-                <>
-                  Pas encore de compte ?{' '}
-                  <button
-                    onClick={() => {
-                      setMode('register')
-                      setError(null)
-                    }}
-                    className="text-yellow-300 hover:underline font-medium"
-                  >
-                    Inscrivez-vous
-                  </button>
-                </>
+                <>Pas encore de compte ? <button onClick={() => { setMode('register'); setError(null); }} className="text-yellow-300 hover:underline font-medium">Inscrivez-vous</button></>
               ) : (
-                <>
-                  Déjà inscrit ?{' '}
-                  <button
-                    onClick={() => {
-                      setMode('login')
-                      setError(null)
-                    }}
-                    className="text-yellow-300 hover:underline font-medium"
-                  >
-                    Connectez-vous
-                  </button>
-                </>
+                <>Déjà inscrit ? <button onClick={() => { setMode('login'); setError(null); }} className="text-yellow-300 hover:underline font-medium">Connectez-vous</button></>
               )}
             </p>
           )}
         </div>
 
-        {/* Pied de page */}
-        <p className="text-center text-white/50 text-sm mt-6">
-          © 2026 Bahati-Loto. Tous droits réservés.
-        </p>
+        <p className="text-center text-white/50 text-sm mt-6">© 2026 Bahati-Loto. Tous droits réservés.</p>
       </div>
     </div>
   )
