@@ -168,7 +168,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 text-white">
-      <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'url("/pattern-rdc.png")' }} />
+      <div className="absolute inset-0 opacity-5 pointer-events-none bg-gradient-to-br from-white to-transparent" />
 
       <div className="relative max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <header className="text-center mb-12">
