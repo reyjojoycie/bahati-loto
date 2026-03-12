@@ -76,7 +76,7 @@ export default function LoginPage() {
       })
       if (error) {
         if (error.message.includes('already registered')) {
-          setError("Ce numéro est déjà utilisé.")
+          setError("Ce numéro est déjà associé à un compte. Veuillez vous connecter ou utiliser la fonction 'Mot de passe oublié'.")
         } else {
           setError(error.message)
         }
@@ -190,7 +190,15 @@ export default function LoginPage() {
         password,
         options: { data: { full_name: fullName } },
       })
-      if (signUpError) throw signUpError
+      if (signUpError) {
+        if (signUpError.message.includes('already registered')) {
+          setError("Ce numéro est déjà utilisé. Veuillez vous connecter.")
+        } else {
+          setError(signUpError.message)
+        }
+        setLoading(false)
+        return
+      }
 
       await handleAutoAssignTicket()
       setSuccess("Compte créé avec succès ! Redirection...")
@@ -230,13 +238,17 @@ export default function LoginPage() {
               className={`flex-1 py-3 rounded-lg font-bold transition ${
                 mode === 'login' ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow' : 'text-gray-300 hover:text-white'
               }`}
-            >Connexion</button>
+            >
+              Connexion
+            </button>
             <button
               onClick={() => { setMode('register'); setStep('credentials'); setError(null); }}
               className={`flex-1 py-3 rounded-lg font-bold transition ${
                 mode === 'register' ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white shadow' : 'text-gray-300 hover:text-white'
               }`}
-            >Inscription</button>
+            >
+              Inscription
+            </button>
           </div>
 
           {step === 'credentials' && (

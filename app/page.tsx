@@ -8,6 +8,7 @@ import Link from 'next/link'
 
 export default function HomePage() {
   const [user, setUser] = useState<any>(null)
+  const [userName, setUserName] = useState<string>('')
   const [tickets, setTickets] = useState<any[]>([])
   const [balance, setBalance] = useState<number>(0)
   const [lastDraw, setLastDraw] = useState<any>(null)
@@ -20,7 +21,6 @@ export default function HomePage() {
 
   const supabase = createClient()
 
-  // Calcul du compte à rebours (utilise nextDrawDate)
   const calculateCountdown = () => {
     if (!nextDrawDate) return
     const now = new Date()
@@ -36,12 +36,10 @@ export default function HomePage() {
     setCountdown(`${days}j ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`)
   }
 
-  // Compter les correspondances
   const countMatches = (ticketNumbers: number[], winning: number[]) => {
     return ticketNumbers.filter(n => winning.includes(n)).length
   }
 
-  // Calculer le gain selon le type
   const calculatePrize = (matches: number, ticketType: 'normal' | 'booster') => {
     if (ticketType === 'booster') {
       if (matches === 6) return 15000000
@@ -58,7 +56,6 @@ export default function HomePage() {
     }
   }
 
-  // Charger toutes les données
   const loadData = async () => {
     setLoading(true)
     setError(null)
@@ -67,14 +64,15 @@ export default function HomePage() {
       setUser(session?.user || null)
 
       if (session?.user) {
-        // Profil utilisateur
+        // Profil utilisateur (balance et nom)
         const { data: profile, error: profileErr } = await supabase
           .from('profiles')
-          .select('balance')
+          .select('balance, full_name')
           .eq('id', session.user.id)
           .maybeSingle()
         if (profileErr) throw new Error('Erreur chargement profil')
         setBalance(profile?.balance || 0)
+        setUserName(profile?.full_name || '')
 
         // Tickets de l'utilisateur
         const { data: ticketsData, error: ticketsErr } = await supabase
@@ -137,7 +135,6 @@ export default function HomePage() {
     loadData()
   }, [])
 
-  // Mettre à jour le compte à rebours chaque seconde quand nextDrawDate est disponible
   useEffect(() => {
     if (!nextDrawDate) return
     const timer = setInterval(calculateCountdown, 1000)
@@ -168,7 +165,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 text-white">
-      <div className="absolute inset-0 opacity-5 pointer-events-none bg-gradient-to-br from-white to-transparent" />
+      <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'url("/pattern-rdc.png")' }} />
 
       <div className="relative max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <header className="text-center mb-12">
@@ -228,12 +225,13 @@ export default function HomePage() {
 
         {user ? (
           <div className="space-y-12">
-            {/* Carte utilisateur */}
+            {/* Carte utilisateur avec nom et téléphone */}
             <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20">
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div>
                   <p className="text-2xl opacity-80">Bienvenue,</p>
-                  <p className="text-4xl font-bold">{user.phone}</p>
+                  <p className="text-4xl font-bold">{userName || user.phone}</p>
+                  {userName && <p className="text-lg opacity-70 mt-1">{user.phone}</p>}
                 </div>
                 <div className="text-center md:text-right">
                   <p className="text-2xl">Solde</p>
