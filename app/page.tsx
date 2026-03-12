@@ -175,7 +175,7 @@ export default function HomePage() {
             </span>
           </h1>
           <p className="text-2xl md:text-3xl text-yellow-200 font-light">
-            🇨🇩 Le loto qui rend riche à Kinshasa 🇨🇩
+            🇨🇩 Faites vibrer Kin au rythme des millions. 🇨🇩
           </p>
         </header>
 
