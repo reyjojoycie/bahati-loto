@@ -177,7 +177,7 @@ export default function HomePage() {
         <div className="relative z-10 flex flex-col items-center gap-6">
           <div className="w-20 h-20 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin shadow-2xl" />
           <div className="text-amber-400 text-2xl font-serif tracking-widest animate-pulse">
-            Bahati Loto
+            Vesta Loto
           </div>
         </div>
       </div>
@@ -207,7 +207,7 @@ export default function HomePage() {
             </span>
           </div>
           <h1 className="text-6xl md:text-8xl font-serif font-black mb-4 tracking-tight text-white">
-            Bahati-<span className="bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">Loto</span>
+            Vesta-<span className="bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">Loto</span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 font-light italic">
             Le prochain millionnaire, c'est peut-être vous.
@@ -315,7 +315,7 @@ export default function HomePage() {
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               <div className="relative z-10 text-center md:text-left">
                 <p className="text-amber-400 text-sm uppercase tracking-widest font-bold mb-2">Espace Joueur</p>
-                <h2 className="text-3xl md:text-4xl font-serif text-white mb-1">{userName || 'Membre Bahati'}</h2>
+                <h2 className="text-3xl md:text-4xl font-serif text-white mb-1">{userName || 'Membre Vesta'}</h2>
                 <p className="text-gray-400">{user.phone}</p>
               </div>
               
@@ -521,7 +521,7 @@ export default function HomePage() {
                 La chance n'attend plus que <span className="text-amber-400">vous.</span>
               </h2>
               <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto">
-                Rejoignez la plateforme officielle Bahati-Loto. Enregistrez vos tickets, suivez les tirages et retirez vos gains en toute sécurité.
+                Rejoignez la plateforme officielle Vesta-Loto. Enregistrez vos tickets, suivez les tirages et retirez vos gains en toute sécurité.
               </p>
               <Link
                 href="/login"
@@ -541,7 +541,7 @@ export default function HomePage() {
             <a href="https://www.facebook.com/share/172QncYbmL/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">Facebook</a>
             <a href="https://wa.me/243973868195" target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors">Service Client WhatsApp</a>
           </div>
-          <p className="text-gray-500 text-sm mb-2">© {new Date().getFullYear()} Bahati-Loto Pro. Tous droits réservés à Kinshasa, RDC.</p>
+          <p className="text-gray-500 text-sm mb-2">© {new Date().getFullYear()} Vesta-Loto Pro. Tous droits réservés à Kinshasa, RDC.</p>
           <p className="text-gray-600 text-xs uppercase tracking-widest font-bold">Jeu responsable • Interdit aux mineurs</p>
         </footer>
       </div>
@@ -594,7 +594,7 @@ export default function HomePage() {
             <h2 className="text-3xl font-serif font-bold mb-8 text-white border-b border-amber-500/30 pb-4">Conditions Générales</h2>
             <div className="space-y-4 text-sm text-gray-300 max-h-[50vh] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-amber-500/30 scrollbar-track-transparent">
               <p><strong className="text-white">1. Éligibilité</strong> : L'application est strictement réservée aux personnes majeures (18+).</p>
-              <p><strong className="text-white">2. Sécurité des Tickets</strong> : L'ID et l'OTP sont uniques. Bahati-Loto décline toute responsabilité en cas de perte du ticket physique.</p>
+              <p><strong className="text-white">2. Sécurité des Tickets</strong> : L'ID et l'OTP sont uniques. Vesta-Loto décline toute responsabilité en cas de perte du ticket physique.</p>
               <p><strong className="text-white">3. Transactions</strong> : Dépôts et retraits gérés via les réseaux certifiés (M-Pesa, Orange, Airtel).</p>
               <p><strong className="text-white">4. Tirages</strong> : Générés de manière transparente. Les résultats publiés font autorité.</p>
               <p><strong className="text-white">5. Retraits</strong> : Disponibles dès 2 000 FC avec les frais de réseau applicables.</p>

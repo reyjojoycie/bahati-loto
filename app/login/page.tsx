@@ -350,7 +350,7 @@ export default function LoginPage() {
           {/* Conteneur principal */}
           <div className="bg-gray-800/30 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-amber-500/20 transition-all duration-500 opacity-100 translate-y-0">
             <h1 className="text-4xl font-serif font-bold text-center text-white mb-2">
-              Bahati-<span className="text-amber-400">Loto</span>
+              Vesta-<span className="text-amber-400">Loto</span>
             </h1>
             <p className="text-center text-amber-400/80 mb-8 italic">
               {mode === 'login' ? 'Bon retour parmi nous' : 'Rejoignez la chance'}
@@ -685,7 +685,7 @@ export default function LoginPage() {
               <p className="text-xs text-gray-500">
                 + de 10 000 parieurs à Kinshasa nous font confiance
               </p>
-              <p className="text-xs text-gray-600 mt-2">© 2026 Bahati-Loto. Tous droits réservés.</p>
+              <p className="text-xs text-gray-600 mt-2">© 2026 Vesta-Loto. Tous droits réservés.</p>
             </div>
           </div>
         </div>

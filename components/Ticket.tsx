@@ -35,11 +35,11 @@ export default function Ticket({ id, otpCode, ticketType, numbers, drawDate }: T
         bandeau: 'from-blue-500 to-blue-700',
       };
 
-  // Motif SVG de vagues (verseau)
+  // Motif de fond
   const patternSvg = `data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30 Q15 15,30 30 T60 30' stroke='%23ffffff' fill='none' stroke-width='0.5' opacity='0.3' /%3E%3C/svg%3E`;
 
   return (
-    <div className={`relative w-[90mm] h-[130mm] bg-gradient-to-br ${design.container} text-white rounded-3xl shadow-2xl border overflow-hidden font-sans`}>
+    <div className={`relative w-[90mm] h-[130mm] bg-gradient-to-br ${design.container} text-white rounded-3xl shadow-2xl border overflow-hidden font-sans flex flex-col`}>
       {/* Motif de fond */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -54,57 +54,56 @@ export default function Ticket({ id, otpCode, ticketType, numbers, drawDate }: T
       {/* Effet de brillance */}
       <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent pointer-events-none" />
 
-      {/* Bandeau supérieur avec motif */}
-      <div className={`h-3 w-full bg-gradient-to-r ${design.bandeau} relative`}>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovLbc1q5mlw63yd2u2cn0hs6jnzf2gljhr486u3dkgm2yPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cGF0aCBkPSJNMjAgMjBhMTAgMTAgMCAwIDEgMTAgMTAgMTAgMTAgMCAwIDEtMTAgMTAgMTAgMTAgMCAwIDEtMTAtMTAgMTAgMTAgMCAwIDEgMTAtMTB6IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMSIvPjwvc3ZnPg==')] opacity-20" />
-      </div>
+      {/* Bandeau supérieur */}
+      <div className={`h-2 w-full bg-gradient-to-r ${design.bandeau} flex-shrink-0`} />
 
-      <div className="relative px-4 py-3 z-10">
+      {/* Contenu principal - flex-1 pour occuper l'espace */}
+      <div className="flex-1 flex flex-col px-3 py-2 relative z-10 overflow-hidden">
         {/* Logo et titre */}
-        <div className="flex justify-between items-center mb-1">
-          <h1 className="text-2xl font-serif font-bold tracking-wider">
-            BAHATI<span className={design.accent}>-LOTO</span>
+        <div className="flex justify-between items-center mb-0.5">
+          <h1 className="text-xl font-serif font-bold tracking-wider">
+            VESTA<span className={design.accent}>-LOTO</span>
           </h1>
-          <span className="text-[8px] uppercase tracking-widest bg-white/10 px-2 py-1 rounded-full">
+          <span className="text-[6px] uppercase tracking-widest bg-white/10 px-1.5 py-0.5 rounded-full">
             🇨🇩 RDC
           </span>
         </div>
-        <p className="text-[9px] text-gray-300 italic border-b border-white/10 pb-2">
+        <p className="text-[7px] text-gray-300 italic border-b border-white/10 pb-1">
           {ticketType === 'booster' ? 'Puissance & Prestige' : 'Élégance & Chance'}
         </p>
 
         {/* Type et prix */}
-        <div className="flex justify-between items-center mt-3">
-          <div className={`${design.badge} text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1`}>
+        <div className="flex justify-between items-center mt-2">
+          <div className={`${design.badge} text-[9px] font-bold px-2 py-0.5 rounded-full shadow-lg flex items-center gap-0.5`}>
             {ticketType === 'booster' ? '🔥 BOOSTER' : '✨ STANDARD'}
           </div>
-          <span className={`text-base font-black ${design.accent}`}>{prix}</span>
+          <span className={`text-sm font-black ${design.accent}`}>{prix}</span>
         </div>
 
         {/* ID et Code OTP */}
-        <div className="flex justify-between items-center mt-3 text-[9px] bg-black/20 p-2 rounded-xl border border-white/10">
+        <div className="flex justify-between items-center mt-2 text-[8px] bg-black/20 p-1.5 rounded-lg border border-white/10">
           <span className="font-mono">ID: {id}</span>
-          <span className="font-mono bg-black/30 px-2 py-0.5 rounded-lg">OTP: {otpCode}</span>
+          <span className="font-mono bg-black/30 px-1.5 py-0.5 rounded-md">OTP: {otpCode}</span>
         </div>
 
         {/* Date du tirage */}
-        <div className="mt-3 text-center">
-          <span className="text-[10px] uppercase tracking-wider text-red-400 bg-red-900/30 px-3 py-1 rounded-full">
+        <div className="mt-2 text-center">
+          <span className="text-[8px] uppercase tracking-wider text-red-400 bg-red-900/30 px-2 py-0.5 rounded-full">
             Tirage {drawDate}
           </span>
         </div>
 
         {/* Ligne décorative */}
-        <div className={`relative my-3 h-px bg-gradient-to-r from-transparent via-${design.accent.replace('text-', '')} to-transparent`} />
+        <div className={`my-1.5 h-px bg-gradient-to-r from-transparent via-${design.accent.replace('text-', '')} to-transparent`} />
 
         {/* Numéros automatiques */}
-        <div className="mt-2">
-          <p className="text-[9px] font-semibold text-gray-300 mb-2">✨ NUMÉROS CHANCEUX</p>
-          <div className="flex gap-1.5 justify-center">
+        <div className="mt-1">
+          <p className="text-[7px] font-semibold text-gray-300 mb-1">✨ NUMÉROS CHANCEUX</p>
+          <div className="flex gap-1 justify-center">
             {ticketNumbers.map((num, i) => (
               <div
                 key={i}
-                className={`w-8 h-8 rounded-full ${design.numberBg} text-white text-sm font-black flex items-center justify-center shadow-lg border border-white/30`}
+                className={`w-6 h-6 rounded-full ${design.numberBg} text-white text-xs font-black flex items-center justify-center shadow-md border border-white/30`}
               >
                 {num}
               </div>
@@ -112,14 +111,14 @@ export default function Ticket({ id, otpCode, ticketType, numbers, drawDate }: T
           </div>
         </div>
 
-        {/* Espace pour écrire (agrandi) */}
-        <div className="mt-3">
-          <p className="text-[9px] font-semibold text-gray-300 mb-2">✍️ VOS NUMÉROS</p>
-          <div className="flex gap-2 justify-center">
+        {/* Espace pour écrire */}
+        <div className="mt-2">
+          <p className="text-[7px] font-semibold text-gray-300 mb-1">✍️ VOS NUMÉROS</p>
+          <div className="flex gap-1 justify-center">
             {[1, 2, 3, 4, 5, 6].map(i => (
               <div
                 key={i}
-                className="w-9 h-9 bg-white border-2 border-gray-300 rounded-lg flex items-end justify-center text-[12px] font-bold text-gray-700 shadow-md"
+                className="w-7 h-7 bg-white border border-gray-300 rounded-md flex items-end justify-center text-[10px] font-bold text-gray-700 shadow-sm"
               >
                 {i}
               </div>
@@ -127,15 +126,15 @@ export default function Ticket({ id, otpCode, ticketType, numbers, drawDate }: T
           </div>
         </div>
 
-        {/* Gains - Jackpot XL */}
-        <div className="mt-3 text-center">
-          <p className={`text-[10px] font-bold ${design.accent} mb-1`}>🎁 JACKPOT</p>
-          <p className="text-xl font-black text-red-500 drop-shadow-glow">
+        {/* Gains */}
+        <div className="mt-2 text-center">
+          <p className={`text-[8px] font-bold ${design.accent} mb-0.5`}>🎁 JACKPOT</p>
+          <p className="text-lg font-black text-red-500 leading-tight">
             {gains[0][1]}
           </p>
-          <div className="grid grid-cols-3 gap-1 mt-2 text-[7px] text-gray-300">
+          <div className="grid grid-cols-3 gap-0.5 mt-1 text-[6px] text-gray-300">
             {gains.slice(1).map(([comb, gain], idx) => (
-              <div key={idx} className="bg-white/5 p-1 rounded">
+              <div key={idx} className="bg-white/5 p-0.5 rounded">
                 <span className="font-bold">{comb}</span>
                 <span className="block">{gain}</span>
               </div>
@@ -143,16 +142,27 @@ export default function Ticket({ id, otpCode, ticketType, numbers, drawDate }: T
           </div>
         </div>
 
-        {/* QR Code agrandi et infos */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+        {/* COMMENT JOUER ? */}
+        <div className="mt-2">
+          <p className={`text-[8px] font-bold ${design.accent} mb-0.5`}>📋 COMMENT JOUER ?</p>
+          <ol className="text-[6px] text-gray-300 list-decimal list-inside space-y-0.5">
+            <li>Scannez le QR code</li>
+            <li>Rendez-vous sur bahati-loto.vercel.app</li>
+            <li>Choisissez vos 6 numéros</li>
+            <li>Validez et tentez votre chance</li>
+          </ol>
+        </div>
+
+        {/* QR Code et infos - en bas avec flex */}
+        <div className="mt-auto flex items-end justify-between pt-1">
           <div className="text-left">
-            <div className="text-[6px] text-gray-400">🌐 bahati-loto.vercel.app</div>
-            <div className="text-[6px] text-amber-400 mt-1">📞 +243 973 868 195</div>
-            <div className="text-[5px] text-gray-500 mt-1">Jeu responsable</div>
+            <div className="text-[5px] text-gray-400">🌐 bahati-loto.vercel.app</div>
+            <div className="text-[5px] text-amber-400 mt-0.5">📞 +243 973 868 195</div>
+            <div className="text-[4px] text-gray-500 mt-0.5">Jeu responsable</div>
           </div>
           <div className="flex flex-col items-end">
-            <QRCode value="https://bahati-loto.vercel.app" size={45} bgColor="#1f2937" fgColor="#fbbf24" level="L" />
-            <span className={`text-[6px] ${design.accent} mt-1`}>scannez</span>
+            <QRCode value="https://bahati-loto.vercel.app" size={40} bgColor="#1f2937" fgColor="#fbbf24" level="L" />
+            <span className={`text-[5px] ${design.accent} mt-0.5`}>scannez</span>
           </div>
         </div>
       </div>

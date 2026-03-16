@@ -603,7 +603,7 @@ export default function AdminPage() {
         {/* En-tête */}
         <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-white">
-            Bahati-<span className="text-amber-400">Admin</span>
+            Vesta-<span className="text-amber-400">Admin</span>
           </h1>
           <div className="flex gap-4">
             {session && (

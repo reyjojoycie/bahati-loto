@@ -472,7 +472,7 @@ export default function EnregistrerTicketPage() {
 
         {/* Footer */}
         <footer className="mt-20 text-center text-sm text-gray-500 border-t border-gray-800 pt-8">
-          <p>© {new Date().getFullYear()} Bahati-Loto Pro – Tous droits réservés. Kinshasa, RDC</p>
+          <p>© {new Date().getFullYear()} Vesta-Loto Pro – Tous droits réservés. Kinshasa, RDC</p>
         </footer>
       </div>
 

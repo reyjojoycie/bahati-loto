@@ -16,7 +16,7 @@ export default function GenerateTicketsPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Vérifier l'authentification (optionnel)
+      // Vérifier l'authentification (optionnel, adaptez selon votre système)
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/login');
@@ -53,13 +53,13 @@ export default function GenerateTicketsPage() {
     };
 
     fetchData();
-  }, []);
+  }, [supabase, router]);
 
   const handlePrint = () => {
     window.print();
   };
 
-  // Découper les tickets en lots de 4 pour créer plusieurs pages
+  // Découper les tickets en lots de 4 pour créer plusieurs pages A4
   const chunkSize = 4;
   const pages = [];
   for (let i = 0; i < tickets.length; i += chunkSize) {
