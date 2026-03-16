@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import Link from 'next/link'
 
-// Imports conditionnels pour les bibliothèques optionnelles
+// Imports conditionnels pour les bibliothèques optionnelles (Excel/PDF)
 let XLSX: any, jsPDF: any, autoTable: any
 try {
   XLSX = require('xlsx')
@@ -126,7 +127,7 @@ export default function AdminPage() {
         setNextDrawDate('2026-03-31T19:00')
       }
 
-      // Logs d'audit - sans jointure pour éviter l'erreur de relation
+      // Logs d'audit
       const { data: logsData, error: logsErr } = await supabase
         .from('admin_logs')
         .select('*')
@@ -285,7 +286,7 @@ export default function AdminPage() {
     }
   }
 
-  // Générer des tickets en masse
+  // Générer des tickets en masse (utilise la fonction RPC pour contourner RLS)
   const generateTickets = async () => {
     if (generateCount < 1 || generateCount > 50000) {
       setError('Le nombre doit être entre 1 et 50 000')
@@ -323,11 +324,12 @@ export default function AdminPage() {
         })
       }
 
-      for (let i = 0; i < tickets.length; i += 1000) {
-        const batch = tickets.slice(i, i + 1000)
-        const { error: insertErr } = await supabase.from('physical_tickets').insert(batch)
-        if (insertErr) throw insertErr
-      }
+      // Appel à la fonction RPC pour insérer en masse
+      const { error: rpcError } = await supabase.rpc('insert_physical_tickets', {
+        tickets: tickets
+      })
+
+      if (rpcError) throw rpcError
 
       setSuccess(`${generateCount} tickets ${generateType.toUpperCase()} générés avec succès.`)
 
@@ -651,6 +653,16 @@ export default function AdminPage() {
               <StatCard label="Revenu total" value={formatNumber(totalRevenue) + ' FC'} color="yellow" />
             </div>
 
+            {/* Lien vers la génération de tickets PDF */}
+            <div className="mb-8">
+              <Link
+                href="/admin/generate"
+                className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:scale-105 transition"
+              >
+                🎫 Générer des tickets PDF
+              </Link>
+            </div>
+
             {/* Prochain tirage */}
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-amber-500/20">
               <h2 className="text-2xl font-serif font-bold mb-4 text-amber-300">📅 Prochain tirage</h2>
@@ -695,7 +707,7 @@ export default function AdminPage() {
 
             {/* Génération de tickets */}
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-amber-500/20">
-              <h2 className="text-2xl font-serif font-bold mb-4 text-amber-300">🎟️ Générer des tickets</h2>
+              <h2 className="text-2xl font-serif font-bold mb-4 text-amber-300">🎟️ Générer des tickets physiques</h2>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 <div>
                   <label className="block text-sm font-medium text-amber-300 mb-1">Nombre</label>
@@ -1021,7 +1033,7 @@ export default function AdminPage() {
   )
 }
 
-// Composant StatCard avec design luxueux
+// Composant StatCard
 function StatCard({ label, value, color }: { label: string; value: string | number; color: string }) {
   const colorClasses = {
     blue: 'from-blue-600 to-blue-700',

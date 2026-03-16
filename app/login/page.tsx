@@ -277,9 +277,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       phone: formattedPhone,
       options: {
-        shouldCreateUser: false, // Ne pas créer de compte si inexistant
-        // Option pour indiquer que c'est une réinitialisation ? Supabase ne gère pas directement.
-        // On suppose que l'utilisateur existe et on lui envoie un OTP qu'il pourra utiliser pour se connecter et changer son mot de passe.
+        shouldCreateUser: false,
       }
     })
     if (error) {
@@ -349,7 +347,7 @@ export default function LoginPage() {
             </span>
           </div>
 
-          {/* Conteneur principal avec animation simple */}
+          {/* Conteneur principal */}
           <div className="bg-gray-800/30 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-amber-500/20 transition-all duration-500 opacity-100 translate-y-0">
             <h1 className="text-4xl font-serif font-bold text-center text-white mb-2">
               Bahati-<span className="text-amber-400">Loto</span>
@@ -423,14 +421,6 @@ export default function LoginPage() {
                     className="w-full px-4 py-4 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-amber-500/50"
                     placeholder="+243 81 234 5678"
                     limitMaxLength
-                    inputComponent={({ value, onChange, ...rest }) => (
-                      <input
-                        {...rest}
-                        value={value}
-                        onChange={onChange}
-                        className="bg-transparent outline-none w-full"
-                      />
-                    )}
                   />
                 </div>
 
